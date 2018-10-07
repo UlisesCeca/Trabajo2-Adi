@@ -7,47 +7,46 @@ from flask_oauthlib.client import OAuth
 app = Flask(__name__)
 app.config['DEBUG'] = True
 oauth = OAuth()
-mySession=None
-currentUser=None
+mySession = None
+currentUser = None
 
 app.secret_key = 'development'
 
-
 twitter = oauth.remote_app('twitter',
-    base_url='https://api.twitter.com/1.1/',
-    request_token_url='https://api.twitter.com/oauth/request_token',
-    access_token_url='https://api.twitter.com/oauth/access_token',
-    authorize_url='https://api.twitter.com/oauth/authenticate',
-    consumer_key='xRxFoWzorAAgN8C2KGEUvFDdH',
-    consumer_secret='8PiaFxKpSHKYQNCpjd86Unwirlx5aW48Tn1YSB1a4q9Dx77EbI'
-)
+                           base_url='https://api.twitter.com/1.1/',
+                           request_token_url='https://api.twitter.com/oauth/request_token',
+                           access_token_url='https://api.twitter.com/oauth/access_token',
+                           authorize_url='https://api.twitter.com/oauth/authenticate',
+                           consumer_key='xRxFoWzorAAgN8C2KGEUvFDdH',
+                           consumer_secret='8PiaFxKpSHKYQNCpjd86Unwirlx5aW48Tn1YSB1a4q9Dx77EbI'
+                           )
 
 
 # Obtener token para esta sesion
 @twitter.tokengetter
 def get_twitter_token(token=None):
     global mySession
-    
+
     if mySession is not None:
         return mySession['oauth_token'], mySession['oauth_token_secret']
 
-    
+
 # Limpiar sesion anterior e incluir la nueva sesion
 @app.before_request
 def before_request():
     global mySession
     global currentUser
-    
+
     currentUser = None
     if mySession is not None:
         currentUser = mySession
-        
+
 
 # Pagina principal
 @app.route('/')
 def index():
     global currentUser
-    
+
     tweets = None
     if currentUser is not None:
         resp = twitter.request('statuses/home_timeline.json')
@@ -69,7 +68,7 @@ def login():
 @app.route('/logout')
 def logout():
     global mySession
-    
+
     mySession = None
     return redirect(url_for('index'))
 
@@ -78,7 +77,7 @@ def logout():
 @app.route('/oauthorized')
 def oauthorized():
     global mySession
-    
+
     resp = twitter.authorized_response()
     if resp is None:
         flash('You denied the request to sign in.')
@@ -92,43 +91,103 @@ def oauthorized():
 # Operaciones
 @app.route('/deleteTweet', methods=['POST'])
 def deleteTweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048973284187000833"
+    resp = twitter.post('statuses/destroy/' + tweet + ".json")
+
     return redirect(url_for('index'))
 
 
 
 @app.route('/retweet', methods=['POST'])
 def retweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048965836319408128"
+    resp = twitter.post('statuses/retweet/' + tweet + ".json")
+    print resp.status
+    print resp.data
+
     return redirect(url_for('index'))
 
 
 @app.route('/follow', methods=['POST'])
 def follow():
-    return redirect(url_for('index'))
-    
+    global mySession
 
-    
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    userId = ""
+    userName = ""
+    if len(userId) != 0:
+        resp = twitter.post('friendships/create.json', data={'user_id': userId})
+    elif len(userName):
+        resp = twitter.post('friendships/create.json', data={'screen_name': userName})
+    else: print "error" #MOSTRAR ERROR
+    return redirect(url_for('index'))
+
+
+
 @app.route('/tweet', methods=['POST'])
 def tweet():
-    # Paso 1: Si no estoy logueado redirigir a pagina de /login
-               # Usar currentUser y redirect
+    global mySession
 
-    # Paso 2: Obtener los datos a enviar
-               # Usar request (form)
+    if mySession is None:
+        return redirect(url_for('index'))
 
-    # Paso 3: Construir el request a enviar con los datos del paso 2
-               # Utilizar alguno de los metodos de la instancia twitter (post, request, get, ...)
+    tweet = request.form["tweetText"]
 
-    # Paso 4: Comprobar que todo fue bien (no hubo errores) e informar al usuario
-               # La anterior llamada devuelve el response, mirar el estado (status)
-
-    # Paso 5: Redirigir a pagina principal (hecho)
+    resp = twitter.post('statuses/update.json', data={'status': tweet})
+    #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
     return redirect(url_for('index'))
 
 
+@app.route('/myTweets', methods=['GET'])
+def retrieveTweets():
+    resp = twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
+    return redirect(url_for('index'))
 
+
+@app.route('/unfollow', methods=['POST'])
+def unfollow():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    userId = ""
+    userName = "UlisesCeca"
+    if len(userId) != 0:
+        resp = twitter.post('friendships/create.json', data={'user_id': userId})
+    elif len(userName):
+        resp = twitter.post('friendships/destroy.json', data={'screen_name': userName})
+    else:
+        print "error" #MOSTRAR ERROR
+    return redirect(url_for('index'))
+
+@app.route('/like', methods=['POST'])
+def likeTweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048984107252928513"
+    resp = twitter.post('favorites/create.json', data={'id': tweet})
+    print resp.status
+    print resp.data
+
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
     app.run()
-
 
