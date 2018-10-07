@@ -173,6 +173,20 @@ def unfollow():
         print "error" #MOSTRAR ERROR
     return redirect(url_for('index'))
 
+@app.route('/like', methods=['POST'])
+def likeTweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048984107252928513"
+    resp = twitter.post('favorites/create.json', data={'id': tweet})
+    print resp.status
+    print resp.data
+
+    return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run()
