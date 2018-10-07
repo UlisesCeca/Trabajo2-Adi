@@ -33,9 +33,28 @@
     </form>
 
 
+    <form action="{{ url_for('deleteTweet') }}"  method=post>
+      <p>
+          Delete tweet [Tweet ID]:
+          <input type=text name=userId size=40>
+          <input type=submit value="Delete">
+      </p>
+    </form>
+
+
     <form action="{{ url_for('follow') }}"  method=post>
       <p>
           Follow user with ID:
+          <input type=text name=userId size=40> &nbsp;
+          or with username: &nbsp;
+          <input type=text name=userId size=40>
+          <input type=submit value="Follow">
+      </p>
+    </form>
+
+    <form action="{{ url_for('unfollow') }}"  method=post>
+      <p>
+          Unfollow user with ID:
           <input type=text name=userId size=40> &nbsp;
           or with username: &nbsp;
           <input type=text name=userId size=40>
