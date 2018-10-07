@@ -24,6 +24,25 @@
       </p>
     </form>
 
+    <form action="{{ url_for('dislikeTweet') }}"  method=post>
+      <p>
+          Undo like (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <input type=submit value="Undo Like">
+      </p>
+    </form>
+
+
+    <form action="{{ url_for('follow') }}"  method=post>
+      <p>
+          Follow user with ID:
+          <input type=text name=userId size=40> &nbsp;
+          or with username: &nbsp;
+          <input type=text name=userId size=40>
+          <input type=submit value="Follow">
+      </p>
+    </form>
+
     <br/>
     <h3>Mis tweets</h3>
 
