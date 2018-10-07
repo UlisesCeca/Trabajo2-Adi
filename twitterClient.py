@@ -146,12 +146,13 @@ def tweet():
     tweet = request.form["tweetText"]
 
     resp = twitter.post('statuses/update.json', data={'status': tweet})
-
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
     return redirect(url_for('index'))
 
 
-
+def retrieveTweets():
+    resp = twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
