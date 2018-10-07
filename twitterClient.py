@@ -146,6 +146,7 @@ def tweet():
     tweet = request.form["tweetText"]
 
     resp = twitter.post('statuses/update.json', data={'status': tweet})
+    dislikeTweet()
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
     return redirect(url_for('index'))
 
@@ -182,6 +183,20 @@ def likeTweet():
 
     tweet = "1048984107252928513"
     resp = twitter.post('favorites/create.json', data={'id': tweet})
+    print resp.status
+    print resp.data
+
+    return redirect(url_for('index'))
+
+@app.route('/dislike', methods=['POST'])
+def dislikeTweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048984107252928513"
+    resp = twitter.post('favorites/destroy.json', data={'id': tweet})
     print resp.status
     print resp.data
 
