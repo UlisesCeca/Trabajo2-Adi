@@ -146,7 +146,6 @@ def tweet():
     tweet = request.form["tweetText"]
 
     resp = twitter.post('statuses/update.json', data={'status': tweet})
-    unfollow()
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
     return redirect(url_for('index'))
 
