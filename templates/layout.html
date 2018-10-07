@@ -1,22 +1,55 @@
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!doctype html>
+
 <head>
-<title>Mi Cliente de Twitter</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static',
-  filename='style.css') }}">
+  <title>Mi Cliente de Twitter</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static',filename='style.css') }}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{{ url_for('static',filename='css/mdb.min.css') }}" rel="stylesheet">
 </head>
+
 <body>
-<h1>Cliente Twitter - Trabajo 2</h1>
-  {% if user %}
-  <a href="{{ url_for('logout') }}"><img src="{{url_for('static', filename='sign-out.png') }}" alt="sign out"></a>
-  {% else %}
-  <a href="{{ url_for('login') }}"><img src="{{url_for('static', filename='sign-in.png') }}" alt="sign in"></a>
-  {% endif %}
+  <div class="container-fluid" style="background-color: #1da1f2">
+  <div class="row">
+    <div class="col-10">
+        <h1 style="color: white; font-weight: bold;">Cliente Twitter - Trabajo 2</h1>
+    </div>
+    <div class="col-2">{% if user %}
+    <a href="{{ url_for('logout') }}">
+      <img src="{{url_for('static', filename='sign-out.png') }}" alt="sign out">
+    </a>
+    {% else %}
+    <a href="{{ url_for('login') }}">
+    <button type="button" class="btn btn-primary btn-rounded" style="background-color: white">Primary</button>
+    </a>
+    {% endif %}</div>
+  </div>
 
-  
-  # Aqui flashing
+  </div>
 
-  
-{% block body %}{% endblock %}
+  <div class="container-fluid">
+    # Aqui flashing
+  </div>
+
+
+  {% block body %}{% endblock %}
+  <br><br>
+  <div class="container-fluid" style="background-color: #1da1f2; height: 20%;">
+      <p style="color: white; font-weight: bold; right: 0px">
+          Hecho por Ulises
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+      </p>
+  </div>
 </body>
+
 </html>

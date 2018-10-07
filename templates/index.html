@@ -1,34 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
+
+  <div class="container-fluid" style="border-style: solid; border-color: #F2F2F2; width: 50%">
+    <h3 style="font-weight: bold;">Acciones</h3>
+      <br>
     <form action="{{ url_for('tweet') }}"  method=post>
       <p>
           Tweet:
           <input type=text name=tweetText size=40>
-          <input type=submit value="Tweet">
-      </p>
-    </form>
-
-    <form action="{{ url_for('retweet') }}"  method=post>
-      <p>
-          Retweet (Tweet ID):
-          <input type=text name=tweetId size=40>
-          <input type=submit value="Retweet">
-      </p>
-    </form>
-
-    <form action="{{ url_for('likeTweet') }}"  method=post>
-      <p>
-          Like (Tweet ID):
-          <input type=text name=tweetId size=40>
-          <input type=submit value="Like">
-      </p>
-    </form>
-
-    <form action="{{ url_for('dislikeTweet') }}"  method=post>
-      <p>
-          Remove like (Tweet ID):
-          <input type=text name=tweetId size=40>
-          <input type=submit value="Remove Like">
+          <button type="submit" class="btn btn-primary">Tweet</button>
       </p>
     </form>
 
@@ -37,10 +17,33 @@
       <p>
           Delete tweet (Tweet ID):
           <input type=text name=tweetId size=40>
-          <input type=submit value="Delete">
+          <button type="button" class="btn btn-danger">Delete</button>
       </p>
     </form>
 
+    <form action="{{ url_for('retweet') }}"  method=post>
+      <p>
+          Retweet (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <button type="submit" class="btn btn-primary">Retweet</button>
+      </p>
+    </form>
+
+    <form action="{{ url_for('likeTweet') }}"  method=post>
+      <p>
+          Like (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <button type="submit" class="btn btn-primary">Like</button>
+      </p>
+    </form>
+
+    <form action="{{ url_for('dislikeTweet') }}"  method=post>
+      <p>
+          Remove like (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <button type="button" class="btn btn-danger">Remove Like</button>
+      </p>
+    </form>
 
     <form action="{{ url_for('follow') }}"  method=post>
       <p>
@@ -48,7 +51,7 @@
           <input type=text name=userId size=40> &nbsp;
           or with username: &nbsp;
           <input type=text name=username size=40>
-          <input type=submit value="Follow">
+          <button type="submit" class="btn btn-primary">Follow</button>
       </p>
     </form>
 
@@ -58,13 +61,16 @@
           <input type=text name=userId size=40> &nbsp;
           or with username: &nbsp;
           <input type=text name=username size=40>
-          <input type=submit value="Unfollow">
+          <button type="button" class="btn btn-danger">Unfollow</button>
       </p>
     </form>
+  </div>
 
-    <br/>
-    <h3>Mis tweets</h3>
+  <div class="container-fluid" style="border-style: solid; border-color: #F2F2F2; width: 50%; ">
+    <h3 style="font-weight: bold;">Mis tweets</h3>
 
+      <br>
     # Si hay tweets mostrarlos
+  </div>
     
 {% endblock %}
