@@ -26,17 +26,17 @@
 
     <form action="{{ url_for('dislikeTweet') }}"  method=post>
       <p>
-          Undo like (Tweet ID):
+          Remove like (Tweet ID):
           <input type=text name=tweetId size=40>
-          <input type=submit value="Undo Like">
+          <input type=submit value="Remove Like">
       </p>
     </form>
 
 
     <form action="{{ url_for('deleteTweet') }}"  method=post>
       <p>
-          Delete tweet [Tweet ID]:
-          <input type=text name=userId size=40>
+          Delete tweet (Tweet ID):
+          <input type=text name=tweetId size=40>
           <input type=submit value="Delete">
       </p>
     </form>
@@ -47,7 +47,7 @@
           Follow user with ID:
           <input type=text name=userId size=40> &nbsp;
           or with username: &nbsp;
-          <input type=text name=userId size=40>
+          <input type=text name=username size=40>
           <input type=submit value="Follow">
       </p>
     </form>
@@ -57,8 +57,8 @@
           Unfollow user with ID:
           <input type=text name=userId size=40> &nbsp;
           or with username: &nbsp;
-          <input type=text name=userId size=40>
-          <input type=submit value="Follow">
+          <input type=text name=username size=40>
+          <input type=submit value="Unfollow">
       </p>
     </form>
 
