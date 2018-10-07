@@ -2,9 +2,25 @@
 {% block body %}
     <form action="{{ url_for('tweet') }}"  method=post>
       <p>
-	Text: 
-        <input type=text name=tweetText size=40>
-        <input type=submit value="Tweet">
+          Tweet:
+          <input type=text name=tweetText size=40>
+          <input type=submit value="Tweet">
+      </p>
+    </form>
+
+    <form action="{{ url_for('retweet') }}"  method=post>
+      <p>
+          Retweet (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <input type=submit value="Retweet">
+      </p>
+    </form>
+
+    <form action="{{ url_for('retweet') }}"  method=post>
+      <p>
+          Retweet (Tweet ID):
+          <input type=text name=tweetId size=40>
+          <input type=submit value="Retweet">
       </p>
     </form>
 
