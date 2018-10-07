@@ -102,6 +102,18 @@ def retweet():
 
 @app.route('/follow', methods=['POST'])
 def follow():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    userId = ""
+    userName = ""
+    if len(userId) != 0:
+        resp = twitter.post('friendships/create.json', data={'user_id': userId})
+    elif len(userName):
+        resp = twitter.post('friendships/create.json', data={'screen_name': userName})
+    else: print "error" #MOSTRAR ERROR
     return redirect(url_for('index'))
 
 
@@ -118,7 +130,6 @@ def tweet():
     resp = twitter.post('statuses/update.json', data={'status': tweet})
 
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
-
     return redirect(url_for('index'))
 
 
