@@ -91,6 +91,14 @@ def oauthorized():
 # Operaciones
 @app.route('/deleteTweet', methods=['POST'])
 def deleteTweet():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    tweet = "1048973284187000833"
+    resp = twitter.post('statuses/destroy/' + tweet + ".json")
+
     return redirect(url_for('index'))
 
 
@@ -130,6 +138,7 @@ def tweet():
     resp = twitter.post('statuses/update.json', data={'status': tweet})
 
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
+    deleteTweet()
     return redirect(url_for('index'))
 
 
