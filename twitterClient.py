@@ -146,12 +146,32 @@ def tweet():
     tweet = request.form["tweetText"]
 
     resp = twitter.post('statuses/update.json', data={'status': tweet})
+    unfollow()
     #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
     return redirect(url_for('index'))
 
 
+@app.route('/myTweets', methods=['GET'])
 def retrieveTweets():
     resp = twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
+    return redirect(url_for('index'))
+
+
+@app.route('/unfollow', methods=['POST'])
+def unfollow():
+    global mySession
+
+    if mySession is None:
+        return redirect(url_for('index'))
+
+    userId = ""
+    userName = "UlisesCeca"
+    if len(userId) != 0:
+        resp = twitter.post('friendships/create.json', data={'user_id': userId})
+    elif len(userName):
+        resp = twitter.post('friendships/destroy.json', data={'screen_name': userName})
+    else:
+        print "error" #MOSTRAR ERROR
     return redirect(url_for('index'))
 
 
