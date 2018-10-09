@@ -40,6 +40,14 @@ def before_request():
     currentUser = None
     if mySession is not None:
         currentUser = mySession
+    else:
+        flash("You need to log in", "error")
+        return redirect(url_for('index'))
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    flash(e.response, "error")
 
 
 # Pagina principal
@@ -60,7 +68,7 @@ def index():
 # Get auth token (request)
 @app.route('/login')
 def login():
-    callback_url=url_for('oauthorized', next=request.args.get('next'))
+    callback_url = url_for('oauthorized', next=request.args.get('next'))
     return twitter.authorize(callback=callback_url or request.referrer or None)
 
 
@@ -86,126 +94,73 @@ def oauthorized():
     return redirect(url_for('index'))
 
 
-
-
 # Operaciones
 @app.route('/deleteTweet', methods=['POST'])
 def deleteTweet():
-    print "hentra"
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
-    tweet = request.form["tweetId"]
-    resp = twitter.post('statuses/destroy/' + tweet + ".json")
-
+    twitter.post('statuses/destroy/' + request.form["tweetId"] + ".json")
     return redirect(url_for('index'))
-
 
 
 @app.route('/retweet', methods=['POST'])
 def retweet():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
-    tweet = request.form["tweetId"]
-    resp = twitter.post('statuses/retweet/' + tweet + ".json")
-    print resp.status
-    print resp.data
-
+    twitter.post('statuses/retweet/' + request.form["tweetId"] + ".json")
     return redirect(url_for('index'))
 
 
 @app.route('/follow', methods=['POST'])
 def follow():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
     userId = request.form["userId"]
     userName = request.form["username"]
+    checkFields(userId, userName)
     if len(userId) != 0:
-        resp = twitter.post('friendships/create.json', data={'user_id': userId})
-    elif len(userName):
-        resp = twitter.post('friendships/create.json', data={'screen_name': userName})
-    else: print "error" #MOSTRAR ERROR
+        twitter.post('friendships/create.json', data={'user_id': userId})
+    else:
+        twitter.post('friendships/create.json', data={'screen_name': userName})
     return redirect(url_for('index'))
-
 
 
 @app.route('/tweet', methods=['POST'])
 def tweet():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
-    tweet = request.form["tweetText"]
-
-    resp = twitter.post('statuses/update.json', data={'status': tweet})
-    dislikeTweet()
-    #FALTA MIRAR SI HA HABIDO ERRORES MIRANDO EL STATUS Y AVISAR AL USUARIO
+    twitter.post('statuses/update.json', data={'status': request.form["tweetText"]})
     return redirect(url_for('index'))
 
 
 @app.route('/myTweets', methods=['GET'])
 def retrieveTweets():
-    resp = twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
+    twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
     return redirect(url_for('index'))
 
 
 @app.route('/unfollow', methods=['POST'])
 def unfollow():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
     userId = request.form["userId"]
     userName = request.form["username"]
+    checkFields(userId, userName)
     if len(userId) != 0:
-        resp = twitter.post('friendships/destroy.json', data={'user_id': userId})
-    elif len(userName):
-        resp = twitter.post('friendships/destroy.json', data={'screen_name': userName})
+        twitter.post('friendships/destroy.json', data={'user_id': userId})
     else:
-        print "error" #MOSTRAR ERROR
-    print resp.status
-    print resp.data
+        twitter.post('friendships/destroy.json', data={'screen_name': userName})
     return redirect(url_for('index'))
+
 
 @app.route('/like', methods=['POST'])
 def likeTweet():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
-    tweet = request.form["tweetId"]
-    resp = twitter.post('favorites/create.json', data={'id': tweet})
-    print resp.status
-    print resp.data
-
+    twitter.post('favorites/create.json', data={'id': request.form["tweetId"]})
     return redirect(url_for('index'))
+
 
 @app.route('/dislike', methods=['POST'])
 def dislikeTweet():
-    global mySession
-
-    if mySession is None:
-        return redirect(url_for('index'))
-
-    tweet = request.form["tweetId"]
-    resp = twitter.post('favorites/destroy.json', data={'id': tweet})
-    print resp.status
-    print resp.data
-
+    twitter.post('favorites/destroy.json', data={'id': request.form["tweetId"]})
     return redirect(url_for('index'))
+
+
+def checkFields(field1, field2):
+    if len(field1) != 0 and len(field2) != 0:
+        flash("You must enter the user id or username, not both.", "error")
+    elif len(field1) == 0 and len(field2) == 0:
+        flash("You must enter the user id or username.", "error")
 
 
 if __name__ == '__main__':
     app.run()
-
