@@ -34,6 +34,7 @@ def get_twitter_token(token=None):
 # Limpiar sesion anterior e incluir la nueva sesion
 @app.before_request
 def before_request():
+    print "prueba"
     global mySession
     global currentUser
 
@@ -42,7 +43,6 @@ def before_request():
         currentUser = mySession
     else:
         flash("You need to log in", "error")
-        return redirect(url_for('index'))
 
 
 @app.errorhandler(Exception)
