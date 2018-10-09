@@ -91,12 +91,13 @@ def oauthorized():
 # Operaciones
 @app.route('/deleteTweet', methods=['POST'])
 def deleteTweet():
+    print "hentra"
     global mySession
 
     if mySession is None:
         return redirect(url_for('index'))
 
-    tweet = "1048973284187000833"
+    tweet = request.form["tweetId"]
     resp = twitter.post('statuses/destroy/' + tweet + ".json")
 
     return redirect(url_for('index'))
@@ -110,7 +111,7 @@ def retweet():
     if mySession is None:
         return redirect(url_for('index'))
 
-    tweet = "1048965836319408128"
+    tweet = request.form["tweetId"]
     resp = twitter.post('statuses/retweet/' + tweet + ".json")
     print resp.status
     print resp.data
@@ -125,8 +126,8 @@ def follow():
     if mySession is None:
         return redirect(url_for('index'))
 
-    userId = ""
-    userName = ""
+    userId = request.form["userId"]
+    userName = request.form["username"]
     if len(userId) != 0:
         resp = twitter.post('friendships/create.json', data={'user_id': userId})
     elif len(userName):
@@ -164,14 +165,16 @@ def unfollow():
     if mySession is None:
         return redirect(url_for('index'))
 
-    userId = ""
-    userName = "UlisesCeca"
+    userId = request.form["userId"]
+    userName = request.form["username"]
     if len(userId) != 0:
-        resp = twitter.post('friendships/create.json', data={'user_id': userId})
+        resp = twitter.post('friendships/destroy.json', data={'user_id': userId})
     elif len(userName):
         resp = twitter.post('friendships/destroy.json', data={'screen_name': userName})
     else:
         print "error" #MOSTRAR ERROR
+    print resp.status
+    print resp.data
     return redirect(url_for('index'))
 
 @app.route('/like', methods=['POST'])
@@ -181,7 +184,7 @@ def likeTweet():
     if mySession is None:
         return redirect(url_for('index'))
 
-    tweet = "1048984107252928513"
+    tweet = request.form["tweetId"]
     resp = twitter.post('favorites/create.json', data={'id': tweet})
     print resp.status
     print resp.data
@@ -195,7 +198,7 @@ def dislikeTweet():
     if mySession is None:
         return redirect(url_for('index'))
 
-    tweet = "1048984107252928513"
+    tweet = request.form["tweetId"]
     resp = twitter.post('favorites/destroy.json', data={'id': tweet})
     print resp.status
     print resp.data
