@@ -20,11 +20,11 @@
     </div>
     <div class="col-2">{% if user %}
     <a href="{{ url_for('logout') }}">
-      <img src="{{url_for('static', filename='sign-out.png') }}" alt="sign out">
+    <button type="button" class="btn btn-danger btn-rounded" style="background-color: white">Logout</button>
     </a>
     {% else %}
     <a href="{{ url_for('login') }}">
-    <button type="button" class="btn btn-primary btn-rounded" style="background-color: white">Primary</button>
+    <button type="button" class="btn btn-primary btn-rounded" style="background-color: white">Login</button>
     </a>
     {% endif %}</div>
   </div>
