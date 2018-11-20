@@ -34,7 +34,6 @@ def get_twitter_token(token=None):
 # Limpiar sesion anterior e incluir la nueva sesion
 @app.before_request
 def before_request():
-    print "prueba"
     global mySession
     global currentUser
 
@@ -45,10 +44,6 @@ def before_request():
         flash("You need to log in", "error")
 
 
-@app.errorhandler(Exception)
-def handle_error(e):
-    flash(e.response, "error")
-
 
 # Pagina principal
 @app.route('/')
@@ -57,7 +52,7 @@ def index():
 
     tweets = None
     if currentUser is not None:
-        resp = twitter.request('statuses/home_timeline.json')
+        resp = twitter.request('statuses/user_timeline.json' + '?screen_name=' + currentUser['screen_name'])
         if resp.status == 200:
             tweets = resp.data
         else:
@@ -122,12 +117,6 @@ def follow():
 @app.route('/tweet', methods=['POST'])
 def tweet():
     twitter.post('statuses/update.json', data={'status': request.form["tweetText"]})
-    return redirect(url_for('index'))
-
-
-@app.route('/myTweets', methods=['GET'])
-def retrieveTweets():
-    twitter.get('statuses/user_timeline.json?screen_name=UlisesCeca')
     return redirect(url_for('index'))
 
 

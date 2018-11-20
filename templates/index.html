@@ -66,11 +66,17 @@
     </form>
   </div>
 
+    {% if tweets %}
+    <!--mostrar tweets-->
   <div class="container-fluid" style="border-style: solid; border-color: #F2F2F2; width: 50%; ">
     <h3 style="font-weight: bold;">Mis tweets</h3>
-
+      <ul>
+        {% for tweet in tweets %}
+        <li>-{{ tweet.id }} - {{ tweet.user.screen_name }}: {{ tweet.text }}</li>
+        {% endfor %}
+      </ul>
       <br>
-    # Si hay tweets mostrarlos
   </div>
-    
+    {% endif %}
+
 {% endblock %}
