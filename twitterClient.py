@@ -30,7 +30,6 @@ def get_twitter_token(token=None):
     if mySession is not None:
         return mySession['oauth_token'], mySession['oauth_token_secret']
 
-
 # Limpiar sesion anterior e incluir la nueva sesion
 @app.before_request
 def before_request():
@@ -44,7 +43,6 @@ def before_request():
         flash("You need to log in", "error")
 
 
-
 # Pagina principal
 @app.route('/')
 def index():
@@ -53,7 +51,7 @@ def index():
     tweets = None
     if currentUser is not None:
         resp = twitter.request('statuses/user_timeline.json' + '?screen_name=' + currentUser['screen_name'])
-        if resp.status == 200:
+        if statusOK(resp.status):
             tweets = resp.data
         else:
             flash('Imposible acceder a Twitter.')
@@ -86,19 +84,28 @@ def oauthorized():
         flash('You denied the request to sign in.')
     else:
         mySession = resp
+
     return redirect(url_for('index'))
 
 
 # Operaciones
 @app.route('/deleteTweet', methods=['POST'])
 def deleteTweet():
-    twitter.post('statuses/destroy/' + request.form["tweetId"] + ".json")
+    response = twitter.post('statuses/destroy/' + request.form["tweetId"] + ".json")
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("Tweet has been deleted")
     return redirect(url_for('index'))
 
 
 @app.route('/retweet', methods=['POST'])
 def retweet():
-    twitter.post('statuses/retweet/' + request.form["tweetId"] + ".json")
+    response = twitter.post('statuses/retweet/' + request.form["tweetId"] + ".json")
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("Tweet has been retweeted")
     return redirect(url_for('index'))
 
 
@@ -108,15 +115,23 @@ def follow():
     userName = request.form["username"]
     checkFields(userId, userName)
     if len(userId) != 0:
-        twitter.post('friendships/create.json', data={'user_id': userId})
+        response = twitter.post('friendships/create.json', data={'user_id': userId})
     else:
-        twitter.post('friendships/create.json', data={'screen_name': userName})
+        response = twitter.post('friendships/create.json', data={'screen_name': userName})
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("User has been followed")
     return redirect(url_for('index'))
 
 
 @app.route('/tweet', methods=['POST'])
 def tweet():
-    twitter.post('statuses/update.json', data={'status': request.form["tweetText"]})
+    response = twitter.post('statuses/update.json', data={'status': request.form["tweetText"]})
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("Tweet sent")
     return redirect(url_for('index'))
 
 
@@ -126,21 +141,34 @@ def unfollow():
     userName = request.form["username"]
     checkFields(userId, userName)
     if len(userId) != 0:
-        twitter.post('friendships/destroy.json', data={'user_id': userId})
+        response = twitter.post('friendships/destroy.json', data={'user_id': userId})
     else:
-        twitter.post('friendships/destroy.json', data={'screen_name': userName})
+        response = twitter.post('friendships/destroy.json', data={'screen_name': userName})
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("User has been unfollowed")
     return redirect(url_for('index'))
 
 
 @app.route('/like', methods=['POST'])
 def likeTweet():
-    twitter.post('favorites/create.json', data={'id': request.form["tweetId"]})
+    response = twitter.post('favorites/create.json', data={'id': request.form["tweetId"]})
+
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("Tweet has been liked")
     return redirect(url_for('index'))
 
 
 @app.route('/dislike', methods=['POST'])
 def dislikeTweet():
-    twitter.post('favorites/destroy.json', data={'id': request.form["tweetId"]})
+    response = twitter.post('favorites/destroy.json', data={'id': request.form["tweetId"]})
+    if not statusOK(response.status):
+        flash(response.data['errors'][0]['message'], "error")
+    else:
+        flash("Tweet has been unliked")
     return redirect(url_for('index'))
 
 
@@ -149,6 +177,9 @@ def checkFields(field1, field2):
         flash("You must enter the user id or username, not both.", "error")
     elif len(field1) == 0 and len(field2) == 0:
         flash("You must enter the user id or username.", "error")
+
+def statusOK(status):
+    return 200 <= status < 300
 
 
 if __name__ == '__main__':
